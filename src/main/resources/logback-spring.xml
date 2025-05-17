@@ -9,4 +9,6 @@
     <root level="info">
         <appender-ref ref="FILE" />
     </root>
+
+    #TODO: error мають відправлятись на електронну пошту
 </configuration>

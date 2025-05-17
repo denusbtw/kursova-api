@@ -2,8 +2,12 @@ package com.kursova.kursovaapi.dto;
 
 import lombok.Data;
 
+/**
+ * Data Transfer Object for Tour.
+ */
 @Data
 public class TourDTO {
+
     private int id;
     private String name;
     private String type;

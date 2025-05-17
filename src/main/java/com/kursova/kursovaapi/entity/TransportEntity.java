@@ -1,10 +1,9 @@
 package com.kursova.kursovaapi.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
+@Data
 @Entity
 @Table(name = "transport")
 public class TransportEntity {
@@ -13,7 +12,6 @@ public class TransportEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Setter
     private String name;
 
     public TransportEntity() {
