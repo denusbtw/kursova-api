@@ -17,12 +17,10 @@ public class TourMapper {
         dto.setRating(entity.getRating());
         dto.setTransportId(entity.getTransport() != null ? entity.getTransport().getId() : 0);
 
-        if (entity.getTransport() != null) {
-            dto.setTransportId(entity.getTransport().getId());
-            dto.setTransportName(entity.getTransport().getName());
-        } else {
-            dto.setTransportId(0);
-            dto.setTransportName("Невідомо");
+        TransportEntity transport = entity.getTransport();
+        if (transport != null) {
+            dto.setTransportId(transport.getId());
+            dto.setTransportName(transport.getName());
         }
 
         return dto;
