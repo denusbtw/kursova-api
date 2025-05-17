@@ -3,7 +3,9 @@ package com.kursova.kursovaapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
+/**
+ * Entity representing a favorite tour entry.
+ */
 @Data
 @Entity
 @Table(name = "favorite")
@@ -18,7 +20,7 @@ public class FavoriteEntity {
     private TourEntity tour;
 
     public FavoriteEntity() {
-
+        // Default constructor for JPA
     }
 
     public FavoriteEntity(TourEntity tour) {

@@ -3,6 +3,9 @@ package com.kursova.kursovaapi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a tour.
+ */
 @Data
 @Entity
 @Table(name = "tour")
@@ -25,5 +28,6 @@ public class TourEntity {
     private double rating;
 
     public TourEntity() {
+        // Default constructor for JPA
     }
 }

@@ -3,7 +3,14 @@ package com.kursova.kursovaapi.mapper;
 import com.kursova.kursovaapi.dto.TransportDTO;
 import com.kursova.kursovaapi.entity.TransportEntity;
 
-public class TransportMapper {
+/**
+ * Utility class for mapping between TransportEntity and TransportDTO.
+ */
+public final class TransportMapper {
+
+    private TransportMapper() {
+        // Utility class: prevent instantiation
+    }
 
     public static TransportDTO toDto(TransportEntity entity) {
         TransportDTO dto = new TransportDTO();

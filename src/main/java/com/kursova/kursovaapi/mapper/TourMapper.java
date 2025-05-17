@@ -4,7 +4,14 @@ import com.kursova.kursovaapi.dto.TourDTO;
 import com.kursova.kursovaapi.entity.TourEntity;
 import com.kursova.kursovaapi.entity.TransportEntity;
 
+/**
+ * Utility class for mapping between TourEntity and TourDTO.
+ */
 public class TourMapper {
+
+    private TourMapper() {
+        // Utility class: prevent instantiation
+    }
 
     public static TourDTO toDto(TourEntity entity) {
         TourDTO dto = new TourDTO();
@@ -15,12 +22,13 @@ public class TourMapper {
         dto.setNumberOfDays(entity.getNumberOfDays());
         dto.setPrice(entity.getPrice());
         dto.setRating(entity.getRating());
-        dto.setTransportId(entity.getTransport() != null ? entity.getTransport().getId() : 0);
 
         TransportEntity transport = entity.getTransport();
         if (transport != null) {
             dto.setTransportId(transport.getId());
             dto.setTransportName(transport.getName());
+        } else {
+            dto.setTransportId(0);
         }
 
         return dto;

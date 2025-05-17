@@ -18,8 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Сервіс для керування улюбленими турами.
+ */
 @Service
 public class FavoriteService {
+
     private static final Logger logger = LoggerFactory.getLogger(FavoriteService.class);
 
     private final FavoriteRepository favoriteRepository;
@@ -30,17 +34,18 @@ public class FavoriteService {
         this.tourRepository = tourRepository;
     }
 
+    /**
+     * Додає тур до обраного, якщо він ще не доданий.
+     * Аналог Django:
+     *     tour = get_object_or_404(Tour, pk=tour_id)
+     *     if not Favorite.objects.filter(tour=tour).exists():
+     *         Favorite.objects.create(tour=tour)
+     */
     public void addToFavorites(int tourId) {
         logger.info("Attempting to add tour {} to favorites", tourId);
 
-        TourEntity tour;
-        try {
-            tour = tourRepository.findById(tourId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid tour ID"));
-        } catch (IllegalArgumentException e) {
-            logger.warn("Tour with ID {} not found", tourId);
-            throw e;
-        }
+        TourEntity tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid tour ID"));
 
         if (!favoriteRepository.existsByTour_Id(tourId)) {
             favoriteRepository.save(new FavoriteEntity(tour));
@@ -50,6 +55,10 @@ public class FavoriteService {
         }
     }
 
+    /**
+     * Видаляє всі записи з улюбленого за ID туру.
+     * @Transactional — потрібна, бо це DELETE-запит.
+     */
     @Transactional
     public void removeByTourId(int tourId) {
         logger.info("Removing tour {} from favorites", tourId);
@@ -57,6 +66,10 @@ public class FavoriteService {
         logger.info("Tour {} removed from favorites", tourId);
     }
 
+    /**
+     * Отримує всі улюблені тури як DTO.
+     * Встановлює прапор isFavorite = true.
+     */
     public List<TourDTO> getAll() {
         logger.info("Retrieving all favorite tours");
         return favoriteRepository.findAll().stream()
@@ -65,6 +78,11 @@ public class FavoriteService {
                 .toList();
     }
 
+    /**
+     * Шукає тури серед обраних, використовуючи динамічні фільтри.
+     * Весь пошук і фільтрація відбуваються в пам'яті після запиту до БД.
+     * Це неефективно при великій кількості даних.
+     */
     public Page<TourDTO> searchFavorites(
             String name, String type, String mealOption,
             Integer minDays, Integer maxDays,
@@ -73,8 +91,8 @@ public class FavoriteService {
             String transportName,
             Pageable pageable
     ) {
+        // Побудова лог-повідомлення
         StringBuilder message = new StringBuilder("Searching favorites with filters:");
-
         if (name != null && !name.isBlank()) message.append(" name='").append(name).append("'");
         if (type != null && !type.isBlank()) message.append(", type='").append(type).append("'");
         if (transportName != null && !transportName.isBlank()) message.append(", transport='").append(transportName).append("'");
@@ -85,9 +103,9 @@ public class FavoriteService {
             message.append(", price=[").append(minPrice != null ? minPrice : "").append("-").append(maxPrice != null ? maxPrice : "").append("]");
         if (minRating != null || maxRating != null)
             message.append(", rating=[").append(minRating != null ? minRating : "").append("-").append(maxRating != null ? maxRating : "").append("]");
-
         logger.info(message.toString());
 
+        // Побудова динамічного запиту через Specification
         Specification<TourEntity> spec = Specification.where(TourSpecification.nameContains(name))
                 .and(TourSpecification.hasType(type))
                 .and(TourSpecification.hasMealOption(mealOption))
@@ -99,26 +117,25 @@ public class FavoriteService {
                 .and(TourSpecification.maxRating(maxRating))
                 .and(TourSpecification.hasTransportName(transportName));
 
-        // Беремо всі улюблені ID
+        // Беремо всі ID улюблених турів
         List<Integer> favoriteTourIds = favoriteRepository.findAll().stream()
-                .map(f -> f.getTour().getId())
+                .map(fav -> fav.getTour().getId())
                 .toList();
 
-        // Фільтруємо всі тури за Specification та перехресно з улюбленими
+        // Шукаємо всі тури по фільтрах, а потім залишаємо лише ті, що в улюблених
         List<TourDTO> filteredFavorites = tourRepository.findAll(spec).stream()
-                .filter(t -> favoriteTourIds.contains(t.getId()))
+                .filter(tour -> favoriteTourIds.contains(tour.getId()))
                 .map(TourMapper::toDto)
                 .peek(dto -> dto.setIsFavorite(true))
                 .toList();
 
+        // Пагінація вручну (JPA тут не допомагає, бо фільтрація в пам'яті)
         int total = filteredFavorites.size();
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), total);
-
         List<TourDTO> pageContent = start <= end ? filteredFavorites.subList(start, end) : List.of();
 
         logger.info("Returning page {} with {} elements out of {}", pageable.getPageNumber(), pageContent.size(), total);
         return new PageImpl<>(pageContent, pageable, total);
     }
 }
-
