@@ -8,15 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-/**
- * REST-контролер для керування улюбленими турами.
- * Відповідає за маршрути:
- * - POST /api/favorites
- * - DELETE /api/favorites/{id}
- * - GET /api/favorites?filters...
- */
 @RestController
 @RequestMapping("/api/favorites")
 public class FavoriteController {
@@ -29,32 +21,18 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    /**
-     * Додає тур до улюблених.
-     * Очікує JSON із числом — ID туру.
-     * Аналог DRF endpoint, що приймає `{ "tour_id": 123 }`, але тут — просто число.
-     */
     @PostMapping
     public void add(@RequestBody int tourId) {
         logger.info("Received request to add tour {} to favorites", tourId);
         favoriteService.addToFavorites(tourId);
     }
 
-    /**
-     * Видаляє тур із улюблених за його ID.
-     * Аналог: DELETE /api/favorites/123
-     */
     @DeleteMapping("/{tourId}")
     public void remove(@PathVariable int tourId) {
         logger.info("Received request to remove tour {} from favorites", tourId);
         favoriteService.removeByTourId(tourId);
     }
 
-    /**
-     * Повертає сторінку турів, які входять до обраного.
-     * Підтримує фільтри через query-параметри.
-     * Аналог DRF ViewSet з фільтрацією через `filter_backends`.
-     */
     @GetMapping
     public Page<TourDTO> getAll(
             @RequestParam(required = false) String name,

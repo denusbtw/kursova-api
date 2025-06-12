@@ -1,27 +1,24 @@
 package com.kursova.kursovaapi.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * Entity representing a favorite tour entry.
- */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "favorite")
 public class FavoriteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "tour_id")
+    @JoinColumn(name = "tour_id", nullable = false)
     private TourEntity tour;
-
-    public FavoriteEntity() {
-        // Default constructor for JPA
-    }
 
     public FavoriteEntity(TourEntity tour) {
         this.tour = tour;

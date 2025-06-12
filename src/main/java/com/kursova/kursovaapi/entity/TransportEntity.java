@@ -1,12 +1,16 @@
 package com.kursova.kursovaapi.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entity representing a transport option.
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "transport")
 public class TransportEntity {
@@ -16,10 +20,6 @@ public class TransportEntity {
     private int id;
 
     private String name;
-
-    public TransportEntity() {
-        // Default constructor for JPA
-    }
 
     public TransportEntity(String name) {
         this.name = name;

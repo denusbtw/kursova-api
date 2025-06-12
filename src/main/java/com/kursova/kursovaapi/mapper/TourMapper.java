@@ -7,13 +7,12 @@ import com.kursova.kursovaapi.entity.TransportEntity;
 /**
  * Utility class for mapping between TourEntity and TourDTO.
  */
-public class TourMapper {
-
-    private TourMapper() {
-        // Utility class: prevent instantiation
-    }
+public final class TourMapper {
 
     public static TourDTO toDto(TourEntity entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("TourEntity must not be null");
+        }
         TourDTO dto = new TourDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
@@ -35,6 +34,10 @@ public class TourMapper {
     }
 
     public static TourEntity toEntity(TourDTO dto, TransportEntity transport) {
+        if (dto == null) {
+            throw new IllegalArgumentException("TourDTO must not be null");
+        }
+
         TourEntity entity = new TourEntity();
         entity.setName(dto.getName());
         entity.setType(dto.getType());

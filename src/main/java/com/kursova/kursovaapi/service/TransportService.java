@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Сервіс для роботи з транспортом.
- * Це аналог Django-сервісу або ViewSet, який інкапсулює логіку CRUD.
  */
 @Service
 public class TransportService {
@@ -27,7 +26,6 @@ public class TransportService {
 
     /**
      * Повертає DTO транспорту за ID.
-     * Аналог: get_object_or_404(Transport, pk=id)
      */
     public TransportDTO getById(int id) {
         logger.info("Fetching transport with ID {}", id);
@@ -43,7 +41,6 @@ public class TransportService {
 
     /**
      * Повертає всі транспорти як список DTO.
-     * Аналог: Transport.objects.all()
      */
     public List<TransportDTO> getAll() {
         logger.info("Fetching all transport entries");
@@ -55,7 +52,6 @@ public class TransportService {
 
     /**
      * Створює новий транспорт і повертає DTO.
-     * Аналог: Transport.objects.create(...)
      */
     public TransportDTO create(TransportDTO dto) {
         logger.info("Creating new transport: {}", dto.getName());
@@ -69,7 +65,6 @@ public class TransportService {
 
     /**
      * Видаляє транспорт за ID.
-     * Аналог: Transport.objects.filter(pk=id).delete()
      */
     public void delete(int id) {
         logger.info("Deleting transport with ID {}", id);
@@ -79,10 +74,6 @@ public class TransportService {
 
     /**
      * Оновлює транспорт за ID.
-     * Аналог:
-     *   transport = get_object_or_404(...)
-     *   transport.name = dto.name
-     *   transport.save()
      */
     public TransportDTO update(int id, TransportDTO dto) {
         logger.info("Updating transport with ID {}", id);

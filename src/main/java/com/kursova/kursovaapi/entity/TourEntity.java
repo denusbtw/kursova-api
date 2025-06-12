@@ -1,12 +1,16 @@
 package com.kursova.kursovaapi.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entity representing a tour.
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tour")
 public class TourEntity {
@@ -27,7 +31,13 @@ public class TourEntity {
     private int price;
     private double rating;
 
-    public TourEntity() {
-        // Default constructor for JPA
+    public TourEntity(String name, String type, TransportEntity transport, String mealOption, Integer numberOfDays, Integer price, Double rating) {
+        this.name = name;
+        this.type = type;
+        this.transport = transport;
+        this.mealOption = mealOption;
+        this.numberOfDays = numberOfDays;
+        this.price = price;
+        this.rating = rating;
     }
 }

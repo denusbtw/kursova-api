@@ -36,23 +36,21 @@ public class FavoriteService {
 
     /**
      * Додає тур до обраного, якщо він ще не доданий.
-     * Аналог Django:
-     *     tour = get_object_or_404(Tour, pk=tour_id)
-     *     if not Favorite.objects.filter(tour=tour).exists():
-     *         Favorite.objects.create(tour=tour)
      */
     public void addToFavorites(int tourId) {
-        logger.info("Attempting to add tour {} to favorites", tourId);
-
-        TourEntity tour = tourRepository.findById(tourId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid tour ID"));
-
-        if (!favoriteRepository.existsByTour_Id(tourId)) {
-            favoriteRepository.save(new FavoriteEntity(tour));
-            logger.info("Tour {} added to favorites", tourId);
-        } else {
-            logger.info("Tour {} already in favorites", tourId);
-        }
+        tourRepository.findById(tourId).ifPresentOrElse(
+                tour -> {
+                    if (!favoriteRepository.existsByTour_Id(tourId)) {
+                        favoriteRepository.save(new FavoriteEntity(tour));
+                        logger.info("Tour {} added to favorites", tourId);
+                    } else {
+                        logger.debug("Tour {} already in favorites", tourId);
+                    }
+                },
+                () -> {
+                    throw new IllegalArgumentException("Invalid tour ID: " + tourId);
+                }
+        );
     }
 
     /**
@@ -80,8 +78,6 @@ public class FavoriteService {
 
     /**
      * Шукає тури серед обраних, використовуючи динамічні фільтри.
-     * Весь пошук і фільтрація відбуваються в пам'яті після запиту до БД.
-     * Це неефективно при великій кількості даних.
      */
     public Page<TourDTO> searchFavorites(
             String name, String type, String mealOption,
@@ -129,7 +125,6 @@ public class FavoriteService {
                 .peek(dto -> dto.setIsFavorite(true))
                 .toList();
 
-        // Пагінація вручну (JPA тут не допомагає, бо фільтрація в пам'яті)
         int total = filteredFavorites.size();
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), total);

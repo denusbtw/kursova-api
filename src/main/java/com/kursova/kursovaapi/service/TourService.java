@@ -18,7 +18,6 @@ import java.util.List;
 
 /**
  * Сервіс для створення та пошуку турів.
- * TourService = аналог Django views або business-логіки в DRF.
  */
 @Service
 public class TourService {
@@ -42,9 +41,6 @@ public class TourService {
     /**
      * Створює новий тур.
      * Перевіряє існування пов’язаного транспорту.
-     * Аналог:
-     *   transport = get_object_or_404(Transport, pk=dto.transport_id)
-     *   Tour.objects.create(...)
      */
     public TourDTO createTour(TourDTO dto) {
         logger.info("Creating tour: {}", dto.getName());
